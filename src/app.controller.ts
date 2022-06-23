@@ -1,12 +1,14 @@
-import { Controller, Get } from '@nestjs/common';
+import { Body, Controller, Get, Post } from '@nestjs/common';
 import { AppService } from './app.service';
+import { CreateSheetDto } from './dto/CreateSheet.dto';
+import { CreateSheetResponseDto } from './dto/CreateSheetResponse.dto';
 
 @Controller()
 export class AppController {
   constructor(private readonly appService: AppService) {}
 
-  @Get()
-  getHello(): string {
-    return this.appService.getHello();
+  @Post('/sheet')
+  async getSheet(@Body() sheetDto: CreateSheetDto): Promise<CreateSheetResponseDto> {
+    return this.appService.getSheet(sheetDto);
   }
 }
