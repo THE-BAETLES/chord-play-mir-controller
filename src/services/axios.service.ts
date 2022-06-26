@@ -4,6 +4,7 @@ import qs from 'qs';
 @Injectable()
 export class AxiosService<Req, Res> {
     private readonly axiosInstance;
+
     constructor() {
         this.axiosInstance = axios.create(
             {
@@ -11,6 +12,7 @@ export class AxiosService<Req, Res> {
             }
         )
     }
+
     async getRequest(url: string,params: any, port: number): Promise<Res>{
         const response: Res = this.axiosInstance.get(url, {port: port}, qs.stringify(params));
         return response;
@@ -20,4 +22,5 @@ export class AxiosService<Req, Res> {
         const response: Res = this.axiosInstance.post(url, reqBody);
         return response;
     }
+    
 }

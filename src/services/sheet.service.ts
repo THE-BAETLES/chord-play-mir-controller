@@ -10,6 +10,7 @@ export type GenerateSheetDto = {
     midiPath: string;
     videoInfo: CreateSheetDto;
 }
+
 export class SheetService implements ISheetService {
     constructor(private readonly axiosService: AxiosService<GenerateSheetDto,Sheet>,
         private readonly configService: ConfigService) {}
@@ -23,6 +24,4 @@ export class SheetService implements ISheetService {
             videoInfo: sheet
         }, Number(port))
     }
-
-
 }
