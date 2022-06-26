@@ -1,14 +1,18 @@
 import { Injectable } from '@nestjs/common';
-import { IChordService } from './services/chord.interface.service';
-import { ISeparateService } from './services/separate.interface.service';
-import { ISheetService } from './services/sheet.interface.service';
+import { IChordService } from './services/chord/chord.interface.service';
+import { ISheetService } from './services/sheet/sheet.interface.service';
+import { ISeparateService } from './services/separate/separate.interface.service';
 import { CreateSheetDto } from './dto/CreateSheet.dto';
 import { CreateSheetResponseDto } from './dto/CreateSheetResponse.dto';
+import { Inject } from '@nestjs/common';
+
 @Injectable()
 export class AppService {
 
-  constructor(private chordService: IChordService,
-     private separateService: ISeparateService, private sheetService: ISheetService){
+  constructor(
+     @Inject('IChordService')private chordService: IChordService,
+     @Inject('ISeparateService') private separateService: ISeparateService,
+     @Inject('ISheetService') private sheetService: ISheetService){
   }
 
   async getSheet(sheetDto: CreateSheetDto): Promise<CreateSheetResponseDto> {

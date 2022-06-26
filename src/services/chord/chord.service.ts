@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { IChordService } from "./chord.interface.service";
-import { AxiosService } from "./axios.service";
+import { AxiosService } from "../axios.service";
 import axios from "axios";
 import { ConfigService } from "@nestjs/config";
 @Injectable()

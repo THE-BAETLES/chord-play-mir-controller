@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { ISeparateService } from "./separate.interface.service";
-import { AxiosService } from "./axios.service";
 import axios from "axios";
+import { AxiosService } from "../axios.service";
 import { ConfigService } from "@nestjs/config";
 @Injectable()
 export class SeparateService implements ISeparateService {

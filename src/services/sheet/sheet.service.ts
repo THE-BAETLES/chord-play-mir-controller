@@ -1,5 +1,5 @@
 import { CreateSheetDto } from "src/dto/CreateSheet.dto";
-import { AxiosService } from "./axios.service";
+import { AxiosService } from "../axios.service";
 import { ISheetService } from "./sheet.interface.service";
 import { Sheet } from "src/entities/sheet.entities";
 import { url } from "inspector";
