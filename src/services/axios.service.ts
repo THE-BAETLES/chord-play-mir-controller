@@ -19,7 +19,7 @@ export class AxiosService<Req, Res> {
     }
 
     async postRequest(url: string, reqBody: Req, port: number): Promise<Res>{
-        const response: Res = this.axiosInstance.post(url, reqBody);
+        const response: Res = this.axiosInstance.post(url, {port: port} , reqBody);
         return response;
     }
     
