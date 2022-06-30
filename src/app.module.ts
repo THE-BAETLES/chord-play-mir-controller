@@ -18,8 +18,8 @@ import { Axios } from 'axios';
   controllers: [AppController],
   providers: [AppService,
     {provide: "ISeparateService", useClass: SeparateService},
-     {provide: "ISheetService", useClass: SheetService},
-      {provide: "IChordService", useClass: ChordService}, 
+    {provide: "ISheetService", useClass: SheetService},
+    {provide: "IChordService", useClass: ChordService}, 
       AxiosService],
 })
 

@@ -1,5 +1,6 @@
 import { Injectable } from "@nestjs/common";
-import axios from "axios";
+import axios, { Axios } from "axios";
+import { AxiosResponse } from "axios";
 import qs from 'qs';
 @Injectable()
 export class AxiosService<Req, Res> {
@@ -13,8 +14,8 @@ export class AxiosService<Req, Res> {
         )
     }
 
-    async getRequest(url: string,params: any, port: number): Promise<Res>{
-        const response: Res = this.axiosInstance.get(url, {port: port}, qs.stringify(params));
+    async getRequest(url: string,params: any, port: number): Promise<AxiosResponse<Res>>{
+        const response: AxiosResponse<Res> = this.axiosInstance.get(url, {port: port}, qs.stringify(params));
         return response;
     }
 
