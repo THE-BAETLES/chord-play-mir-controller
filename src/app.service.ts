@@ -7,6 +7,7 @@ import { CreateSheetResponseDto } from './dto/CreateSheetResponse.dto';
 import { Inject } from '@nestjs/common';
 import { Chord } from './entities/chord.entities';
 import { Sheet } from './entities/sheet.entities';
+import { Separate } from './entities/separate.entities';
 
 @Injectable()
 export class AppService {
@@ -19,9 +20,12 @@ export class AppService {
 
   async getSheet(sheetDto: CreateSheetDto): Promise<CreateSheetResponseDto> {
     
-    const wavPath: string = await this.separateService.getWav(sheetDto.videoId);
+    const {
+      videoId,
+      accompanimentPath
+    }: Separate = await this.separateService.getWav(sheetDto.videoId);
 
-    const chord : Chord = await this.chordService.getChord(wavPath);
+    const chord : Chord = await this.chordService.getChord(accompanimentPath);
 
     const sheet: Sheet = await this.sheetService.getSheet(chord);
 

@@ -2,8 +2,6 @@ import { Body, Controller, Get, Inject, Post } from '@nestjs/common';
 import { AppService } from './app.service';
 import { CreateSheetDto } from './dto/CreateSheet.dto';
 import { CreateSheetResponseDto } from './dto/CreateSheetResponse.dto';
-import { Sheet } from './entities/sheet.entities';
-import { IAwsUploadService } from './services/aws/aws.interface.upload.service';
 import { AwsUploadService } from './services/aws/aws.upload.service';
 
 
