@@ -1,4 +1,5 @@
+// accompaniment_path to camelcase
 export type Separate = {
-    accompanimentPath: string;
+    accompaniment_path: string;
     videoId: string;
 }
