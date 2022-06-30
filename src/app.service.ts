@@ -5,6 +5,8 @@ import { ISeparateService } from './services/separate/separate.interface.service
 import { CreateSheetDto } from './dto/CreateSheet.dto';
 import { CreateSheetResponseDto } from './dto/CreateSheetResponse.dto';
 import { Inject } from '@nestjs/common';
+import { Chord } from './entities/chord.entities';
+import { Sheet } from './entities/sheet.entities';
 
 @Injectable()
 export class AppService {
@@ -19,12 +21,15 @@ export class AppService {
     
     const wavPath: string = await this.separateService.getWav(sheetDto.videoId);
 
-    const midiPath: string = await this.chordService.getMidi(wavPath);
+    const chord : Chord = await this.chordService.getChord(wavPath);
 
-    const sheet: any = await this.sheetService.getSheet(wavPath,midiPath,sheetDto);
+    const sheet: Sheet = await this.sheetService.getSheet(chord);
 
-    const response = sheet.data;
+    const response:CreateSheetResponseDto = {
+      success: true,
+      payload: sheet
+    };
 
-    return response
+    return response;
   }
 }
