@@ -13,17 +13,15 @@ export type GenerateSheetDto = {
 }
 
 export class SheetService implements ISheetService {
-    constructor(private readonly axiosService: AxiosService<Chord,Sheet>,
+    constructor(private readonly axiosService: AxiosService,
         private readonly configService: ConfigService) {}
 
     async getSheet(chordInfo: Chord): Promise<Sheet> {
         const port= this.configService.get<string>('SHEET_SERVER_PORT');
-        
-        const response = this.axiosService.postRequest('/sheet', {
+        const response = this.axiosService.postRequest<Chord,Sheet>('/sheet', {
             csvPath: chordInfo.csvPath,
             midiPath: chordInfo.midiPath
         }, Number(port));
-
         return response;
 
     }

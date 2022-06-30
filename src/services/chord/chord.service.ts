@@ -6,13 +6,13 @@ import axios from "axios";
 import { ConfigService } from "@nestjs/config";
 @Injectable()
 export class ChordService implements IChordService {
-    constructor(private readonly axiosService: AxiosService<string,Chord>,private readonly configService: ConfigService){
+    constructor(private readonly axiosService: AxiosService,private readonly configService: ConfigService){
 
     }
 
     async getChord(wavPath: string): Promise<Chord> {
         const port= this.configService.get<string>('CHORD_SERVER_PORT')
-        const response: Chord = (await this.axiosService.getRequest('/chord', {wavPath: wavPath}, Number(port))).data;
+        const response: Chord = (await this.axiosService.getRequest<string, Chord>('/chord', {wavPath: wavPath}, Number(port))).data;
         return response;
     }
 }
