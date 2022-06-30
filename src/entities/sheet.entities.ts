@@ -1,9 +1,9 @@
 export type Sheet = {
     bpm: number;
     info: {
-        index: number;
-        onset: number;
-        offset: number;
-        chord: string;
+        position: number;
+        chord: number;
+        start: number;
+        end: string;
     }[]
 }
