@@ -55,10 +55,10 @@ export class SheetService{
     
         const {
           videoId,
-          accompaniment_path
+          accompanimentPath
         }: Separate = await this.getWav(sheetDto.videoId);
         
-        const chord : Chord = await this.getChord(convertPath(accompaniment_path));
+        const chord : Chord = await this.getChord(convertPath(accompanimentPath));
     
         const sheet: Sheet = await this.getSheet({
           csvPath: convertPath(chord.csvPath),
