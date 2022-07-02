@@ -34,8 +34,8 @@ export class SheetService{
 
         // csvPath <-> midiPath
         const response = await this.axiosService.getRequest<Chord,Sheet>('/sheet', {
-            csvPath: chordInfo.midiPath,
-            midiPath: chordInfo.csvPath
+            csvPath: chordInfo.csvPath,
+            midiPath: chordInfo.midiPath
         }, Number(port));
 
         Logger.log('sheet data reponse = ', response.data);
@@ -44,6 +44,7 @@ export class SheetService{
     }
 
     private async getWav(videoId: string): Promise<Separate> {
+        Logger.log(`separate start videoId = ${videoId}`);
         const port= this.configService.get<string>('SEPARATE_SERVER_PORT')
         const response: AxiosResponse<Separate> = await this.axiosService.getRequest<string, Separate>('/separate', {videoId: videoId}, Number(port));
         Logger.log(`separate response = `, response.data);
@@ -73,6 +74,3 @@ export class SheetService{
       }
 }
 
-function inject() {
-    throw new Error("Function not implemented.");
-}
