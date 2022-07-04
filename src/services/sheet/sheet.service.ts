@@ -9,6 +9,7 @@ import { convertPath } from "src/utils/path";
 import { Injectable } from "@nestjs/common";
 import { AxiosResponse } from "axios";
 import { Logger } from "@nestjs/common";
+import { CSVInput } from "@aws-sdk/client-s3";
 
 export type GenerateSheetDto = {
     wavPath: string;
@@ -32,6 +33,8 @@ export class SheetService{
     private async getSheet(chordInfo: Chord): Promise<Sheet> {
         const port= this.configService.get<string>('SHEET_SERVER_PORT');
 
+        Logger.log("csvPath = ", chordInfo.csvPath);
+        
         // csvPath <-> midiPath
         const response = await this.axiosService.getRequest<Chord,Sheet>('/sheet', {
             csvPath: chordInfo.csvPath,
@@ -59,7 +62,7 @@ export class SheetService{
         }: Separate = await this.getWav(sheetDto.videoId);
         
         const chord : Chord = await this.getChord(convertPath(accompanimentPath));
-    
+        
         const sheet: Sheet = await this.getSheet({
           csvPath: convertPath(chord.csvPath),
           midiPath: convertPath(chord.midiPath)
