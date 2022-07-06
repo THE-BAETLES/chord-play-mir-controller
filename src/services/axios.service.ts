@@ -8,18 +8,17 @@ export class AxiosService {
     private readonly axiosInstance;
 
     constructor() {
-        this.axiosInstance = axios.create(
-        )
+        this.axiosInstance = axios.create()
     }
 
-    async getRequest<Req, Res>(url: string,params: any, port: number): Promise<AxiosResponse<Res>>{
+    async getRequest<Req, Res>(url: string,params: any): Promise<AxiosResponse<Res>>{
 
-        const response: AxiosResponse<Res> = this.axiosInstance.get(`http://localhost:${port}${url}`,{params});
+        const response: AxiosResponse<Res> = this.axiosInstance.get(url,{params});
         return response;
     }
 
-    async postRequest<Req, Res>(url: string, reqBody: Req, port: number): Promise<Res>{
-        const response: Res = this.axiosInstance.post(`http://localhost:${port}${url}`, reqBody);
+    async postRequest<Req, Res>(url: string, reqBody: Req): Promise<Res>{
+        const response: Res = this.axiosInstance.post(url, reqBody);
         return response;
     }
     

@@ -9,7 +9,6 @@ import { convertPath } from "src/utils/path";
 import { Injectable } from "@nestjs/common";
 import { AxiosResponse } from "axios";
 import { Logger } from "@nestjs/common";
-import { CSVInput } from "@aws-sdk/client-s3";
 import { RedisService } from "../redis/redis.service";
 
 export type GenerateSheetDto = {
@@ -25,7 +24,7 @@ export class SheetService{
 
     private async getChord(wavPath: string): Promise<Chord> {
         const port= this.configService.get<string>('CHORD_SERVER_PORT')
-        const response: Chord = (await this.axiosService.getRequest<string, Chord>('/chord', {wavPath: wavPath}, Number(port))).data;
+        const response: Chord = (await this.axiosService.getRequest<string, Chord>('http://chord:3000/chord', {wavPath: wavPath})).data;
         Logger.log('chord retrieval response = ', response);
         return response;
     }
@@ -37,10 +36,10 @@ export class SheetService{
         Logger.log("csvPath = ", chordInfo.csvPath);
         
         // csvPath <-> midiPath
-        const response = await this.axiosService.getRequest<Chord,Sheet>('/sheet', {
+        const response = await this.axiosService.getRequest<Chord,Sheet>('http://sheet:3000/sheet', {
             csvPath: chordInfo.csvPath,
             midiPath: chordInfo.midiPath
-        }, Number(port));
+        });
 
         Logger.log('sheet data reponse = ', response.data);
 
@@ -49,8 +48,8 @@ export class SheetService{
 
     private async getWav(videoId: string): Promise<Separate> {
         Logger.log(`separate start videoId = ${videoId}`);
-        const port= this.configService.get<string>('SEPARATE_SERVER_PORT')
-        const response: AxiosResponse<Separate> = await this.axiosService.getRequest<string, Separate>('/separate', {videoId: videoId}, Number(port));
+        const port= this.configService.get<string>('SEPARATE_SERVER_PORT');
+        const response: AxiosResponse<Separate> = await this.axiosService.getRequest<string, Separate>('http://separate:3000/separate', {videoId: videoId});
         Logger.log(`separate response = `, response.data);
         return response.data
     }   
