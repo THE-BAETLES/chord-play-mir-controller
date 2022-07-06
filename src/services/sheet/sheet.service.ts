@@ -10,6 +10,7 @@ import { Injectable } from "@nestjs/common";
 import { AxiosResponse } from "axios";
 import { Logger } from "@nestjs/common";
 import { CSVInput } from "@aws-sdk/client-s3";
+import { RedisService } from "../redis/redis.service";
 
 export type GenerateSheetDto = {
     wavPath: string;
@@ -20,7 +21,7 @@ export type GenerateSheetDto = {
 @Injectable()
 export class SheetService{
     constructor(private readonly axiosService: AxiosService,
-     private configService: ConfigService) {}
+     private configService: ConfigService, private readonly redisService: RedisService) {}
 
     private async getChord(wavPath: string): Promise<Chord> {
         const port= this.configService.get<string>('CHORD_SERVER_PORT')
@@ -55,20 +56,25 @@ export class SheetService{
     }   
 
     async createSheet(sheetDto: CreateSheetDto): Promise<CreateSheetResponseDto> {
-    
         const {
           videoId,
           accompanimentPath
         }: Separate = await this.getWav(sheetDto.videoId);
-        
+
+        this.redisService.send({videoId: videoId, status: 1})
+
         const chord : Chord = await this.getChord(convertPath(accompanimentPath));
+        
+        this.redisService.send({videoId: videoId, status: 2})
         
         const sheet: Sheet = await this.getSheet({
           csvPath: convertPath(chord.csvPath),
           midiPath: convertPath(chord.midiPath)
         });
+
+        this.redisService.send({videoId: videoId, status: 3})
     
-        const response:CreateSheetResponseDto = {
+        const response: CreateSheetResponseDto = {
           success: true,
           payload: sheet
         };

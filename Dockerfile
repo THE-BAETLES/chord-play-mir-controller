@@ -9,6 +9,7 @@ COPY ./package*.json ./
 RUN npm i -g @nestjs/cli
 RUN npm install
 
+
 COPY . .
 
 EXPOSE 3000
