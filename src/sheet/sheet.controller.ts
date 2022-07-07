@@ -1,5 +1,4 @@
 import { Body, Controller, Logger, Post } from '@nestjs/common';
-import { request } from 'http';
 import { CreateSheetDto } from 'src/dto/CreateSheet.dto';
 import { CreateSheetResponseDto } from 'src/dto/CreateSheetResponse.dto';
 import { SheetService } from './sheet.service';
@@ -16,10 +15,9 @@ export class SheetController {
       return sheet
     }
 
-    @Post()
+    @Post('/auto')
     async autoCreateSheet(@Body() sheetDto: CreateSheetDto): Promise<CreateSheetResponseDto> {
       const sheet = await this.sheetService.autoCreateSheet(sheetDto);
-
       return sheet
     }
 }
