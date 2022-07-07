@@ -54,7 +54,31 @@ export class SheetService{
         return response.data
     }   
 
+    async autoCreateSheet(sheetDto: CreateSheetDto): Promise<CreateSheetResponseDto> {
+      // Don`t use redis
+      const {
+        videoId,
+        accompanimentPath
+      }: Separate = await this.getWav(sheetDto.videoId);
+
+      const chord : Chord = await this.getChord(convertPath(accompanimentPath));
+
+      const sheet: Sheet = await this.getSheet({
+        csvPath: convertPath(chord.csvPath),
+        midiPath: convertPath(chord.midiPath)
+      });
+
+      const response: CreateSheetResponseDto = {
+        success: true,
+        payload: sheet
+      };
+
+      return response
+    }
+
+
     async createSheet(sheetDto: CreateSheetDto): Promise<CreateSheetResponseDto> {
+      //  Use Redis publish for progress
         const {
           videoId,
           accompanimentPath
