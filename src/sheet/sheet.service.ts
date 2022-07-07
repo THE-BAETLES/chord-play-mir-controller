@@ -1,5 +1,5 @@
 import { CreateSheetDto } from "src/dto/CreateSheet.dto";
-import { AxiosService } from "../axios.service";
+import { AxiosService } from "src/global/services/axios.service";
 import { Sheet } from "src/entities/sheet.entities";
 import { ConfigService } from "@nestjs/config";
 import { Chord } from "src/entities/chord.entities";
@@ -9,7 +9,7 @@ import { convertPath } from "src/utils/path";
 import { Injectable } from "@nestjs/common";
 import { AxiosResponse } from "axios";
 import { Logger } from "@nestjs/common";
-import { RedisService } from "../redis/redis.service";
+import { RedisService } from "../global/services/redis.service";
 
 export type GenerateSheetDto = {
     wavPath: string;

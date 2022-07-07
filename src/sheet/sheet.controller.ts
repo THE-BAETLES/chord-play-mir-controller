@@ -10,8 +10,16 @@ export class SheetController {
         
     }
     @Post()
+    // Update this looking aws message queue service
     async createSheet(@Body() sheetDto: CreateSheetDto): Promise<CreateSheetResponseDto> {
       const sheet = await this.sheetService.createSheet(sheetDto);
+      return sheet
+    }
+
+    @Post()
+    async autoCreateSheet(@Body() sheetDto: CreateSheetDto): Promise<CreateSheetResponseDto> {
+      const sheet = await this.sheetService.autoCreateSheet(sheetDto);
+
       return sheet
     }
 }

@@ -8,7 +8,7 @@ export interface ProgressInfo {
     status: number;
 }
 
-export const REDIS_PROGRESS_CHANEL =  'REDIS_PROGRESS_CHANEL'
+export const REDIS_PROGRESS_CHANEL = 'REDIS_PROGRESS_CHANEL'
 
 @Injectable()
 export class RedisService {

@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { AxiosService } from '../axios.service';
+import { AxiosService } from 'src/global/services/axios.service';
 import { SheetController } from './sheet.controller';
 import { SheetService } from './sheet.service';
 
