@@ -8,10 +8,9 @@ export const mongoenv = {
     database: process.env.MONGO_DATABASE
 }
 
-export const MongoDBProvider = {
+export const MongoDBProvider = [{
     provide: 'MONGO_CONNECTION',
     useFactory: (): Promise<typeof mongoose> => 
         mongoose.connect(`mongodb://${mongoenv.user}/${mongoenv.password}@${mongoenv.endpoint}:${mongoenv.port}/${mongoenv.database}`)
-    
-}
+}]
 
