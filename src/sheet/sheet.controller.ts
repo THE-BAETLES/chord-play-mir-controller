@@ -1,6 +1,7 @@
 import { Body, Controller, Logger, Post } from '@nestjs/common';
-import { CreateSheetDto } from 'src/dto/CreateSheet.dto';
-import { CreateSheetResponseDto } from 'src/dto/CreateSheetResponse.dto';
+import { PostSheetDto } from 'src/dto/PostSheet.dto';
+import { PostSheetResponseDto } from 'src/dto/PostSheetResponse.dto';
+
 import { SheetService } from './sheet.service';
 @Controller('sheet')
 export class SheetController {
@@ -10,14 +11,14 @@ export class SheetController {
     }
     @Post()
     // Update this looking aws message queue service
-    async createSheet(@Body() sheetDto: CreateSheetDto): Promise<CreateSheetResponseDto> {
-      const sheet = await this.sheetService.createSheet(sheetDto);
+    async createSheet(@Body() sheetDto: PostSheetDto): Promise<PostSheetResponseDto> {
+      const sheet = await this.sheetService.createSheet(sheetDto,'USER');
       return sheet
     }
 
     @Post('/auto')
-    async autoCreateSheet(@Body() sheetDto: CreateSheetDto): Promise<CreateSheetResponseDto> {
-      const sheet = await this.sheetService.autoCreateSheet(sheetDto);
+    async autoCreateSheet(@Body() sheetDto: PostSheetDto): Promise<PostSheetResponseDto> {
+      const sheet = await this.sheetService.createSheet(sheetDto,'AUTO');
       return sheet
     }
 }

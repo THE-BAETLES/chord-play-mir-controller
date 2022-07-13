@@ -1,5 +1,6 @@
 import { Sheet } from "src/entities/sheet.entities";
-export interface CreateSheetResponseDto {
+
+export interface PostSheetResponseDto {
     success: boolean;
     payload: Sheet;
 }
