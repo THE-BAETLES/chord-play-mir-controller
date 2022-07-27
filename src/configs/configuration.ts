@@ -4,6 +4,7 @@ import * as dotenv from 'dotenv'
 import * as path from "path";
 import { ServerConfigType } from "./server.config";
 import { Logger } from "@nestjs/common";
+import { RedisConfigType } from "./redis.config";
 
 if(process.env.NODE_ENV === 'development') {
     dotenv.config({path: ".development.env"})
@@ -17,6 +18,7 @@ export interface ConfigType {
     aws: AwsConfigType;
     mongo: MongoConfigType;
     server: ServerConfigType;
+    redis: RedisConfigType;
 }
 
 export default (): ConfigType => ({
@@ -43,6 +45,10 @@ export default (): ConfigType => ({
         separateEndpoint: process.env.SEPARATE_ENDPOINT,
         retrievalEndPoint: process.env.RETRIEVAL_ENDPOINT,
         sheetEndpoint: process.env.SHEET_ENDPOINT
+    },
+    redis: {
+        endpoint: process.env.REDIS_ENDPOINT,
+        port: process.env.REDIS_PORT
     }
 })
 

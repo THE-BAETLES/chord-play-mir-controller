@@ -1,10 +1,11 @@
 import { Inject, Injectable } from "@nestjs/common";
 import { SheetService } from "src/sheet/sheet.service";
-import { SQSType } from "./sqs.providers";
+import { SQSClient } from "@aws-sdk/client-sqs";
+
 
 @Injectable()
 export class SQSService {
-    constructor(@Inject('SQS_INSTANCE') private sqs: SQSType) {
+    constructor(@Inject('SQS_INSTANCE') private sqs: SQSClient) {
         // set aws config
         
     }

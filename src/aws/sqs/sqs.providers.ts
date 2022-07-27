@@ -1,14 +1,23 @@
 import * as AWS from "aws-sdk";
 import { AwsConfigType } from "src/configs/aws.config";
 import { ConfigService } from "@nestjs/config"
+import { SQSClient } from "@aws-sdk/client-sqs";
+import { SQSClientConfig } from "@aws-sdk/client-sqs";
+import { createSecretKey } from "crypto";
 
-export type SQSType = Omit<typeof AWS.SQS, 'Types' | 'prototype'>;
 
 export const SQSProvider = [{
-    provide: 'SQS_INSTANCE',
-    useFactory: (config: ConfigService): SQSType => {
+    provide: 'SQS_CLIENT',
+    useFactory: async (config: ConfigService): Promise<SQSClient> => {
         const {aws, sqs} = config.get<AwsConfigType>('aws');
-        return new AWS.SQS({...aws, endpoint: sqs.url, apiVersion: sqs.apiVersion})
+        return new SQSClient({
+            region: aws.region,
+            endpoint: sqs.url,
+            credentials: {
+                accessKeyId: aws.accessKeyId,
+                secretAccessKey: aws.secretKey
+            }
+        })
     },
     inject: [ConfigService]
 }]
