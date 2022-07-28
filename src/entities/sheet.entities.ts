@@ -1,9 +1,6 @@
+import { ChordInfo } from "src/models/chordinfo.model";
+
 export type Sheet = {
     bpm: number;
-    info: {
-        position: number;
-        chord: number;
-        start: number;
-        end: string;
-    }[]
+    info: ChordInfo[]
 }

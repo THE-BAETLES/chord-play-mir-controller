@@ -1,12 +1,29 @@
-import { Schema } from "mongoose";
-export const SheetSchema = new Schema({
-    id: String,
-    video_id: String,
-    user_id: String,
-    title: String,
-    created_at: Date,
-    updated_at: Date,
-    like_conut: Number
-});
+import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
+import { ObjectId } from "mongoose";
 
+export type SheetDocument = Sheet & Document;
 
+@Schema()
+export class Sheet {
+    _id: string;
+    
+    @Prop()
+    video_id: string;
+
+    @Prop()
+    user_id: string;
+
+    @Prop()
+    title: string;
+
+    @Prop()
+    created_at: Date;
+
+    @Prop()
+    updated_at: Date;
+
+    @Prop()
+    like_count: number;
+}
+
+export const SheetSchema = SchemaFactory.createForClass(Sheet);

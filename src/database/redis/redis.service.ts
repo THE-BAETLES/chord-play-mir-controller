@@ -1,36 +1,36 @@
-import { Injectable } from "@nestjs/common";
+import { Inject, Injectable } from "@nestjs/common";
 import { RedisClientType } from "@redis/client";
-import { createClient } from "redis";
-
+import { CreateAISheetMessage } from "src/messages/createAiSheet.message";
+import { SET_PROGRESS_CONNECTION, PUBLISH_PROGRESS_CONNECTION } from "./redis.provider";
+import { SheetRepository } from "src/repositories/sheet.repository";
+import { SheetDataRepository } from "src/repositories/sheetdata.repository";
+import EventEmitter from "events";
 
 export interface ProgressInfo {
     videoId: string;
     status: number;
 }
 
-export const REDIS_PROGRESS_CHANEL = 'REDIS_PROGRESS_CHANEL'
 
 @Injectable()
 export class RedisService {
-    private client: RedisClientType
-
-    constructor(){
-        // this.client = createClient({url: process.env.REDIS_ENDPOINT})
-        // this.client.connect()
+    
+    constructor(
+    @Inject(PUBLISH_PROGRESS_CONNECTION) private connection: RedisClientType,        
+    @Inject(SET_PROGRESS_CONNECTION) private setConnection: RedisClientType,){
     }
 
-    // async send(message: ProgressInfo){
-    //     this.saveVideoStatus(message)
-    //     this.sendMessage(message)
-    // }
+    private async publishMessage(message: CreateAISheetMessage, channel: string) {
+        await this.connection.publish(message.status.toString(), channel)
+    }
+    private async setProgressStatus(message: CreateAISheetMessage,channel: string) {
+        await this.setConnection.set(channel, message.status.toString());
+    }
 
-    // async sendMessage(message: ProgressInfo){
-    //     this.client.PUBLISH(`REDIS_PROGRESS_CHANEL_${message.videoId}`, message.status.toString())
-    // }
+    async renderUserProgressBar(message: CreateAISheetMessage, channel: string) {
+        await this.publishMessage(message, channel);
+        await this.setProgressStatus(message, channel);
+    }
 
-    // async saveVideoStatus(message: ProgressInfo){
-    //     this.client.SET(message.videoId, message.status, {
-    //     })
-    // }
-
+  
 }

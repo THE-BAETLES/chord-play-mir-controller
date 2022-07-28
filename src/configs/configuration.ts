@@ -30,8 +30,8 @@ export default (): ConfigType => ({
             secretKey: process.env.AWS_SECRET_KEY
         },
         sqs: {
-            url: process.env.SQS_URL,
-            apiVersion: process.env.SQS_API_VERSION || '2012-11-05'
+            url: process.env.INFERENCE_QUEUE_URL,
+            apiVersion: process.env.INFERENCE_SQS_API_VERSION || '2012-11-05'
         }
     },
     mongo: {
@@ -47,8 +47,8 @@ export default (): ConfigType => ({
         sheetEndpoint: process.env.SHEET_ENDPOINT
     },
     redis: {
-        endpoint: process.env.REDIS_ENDPOINT,
-        port: process.env.REDIS_PORT
+        endpoint: process.env.PROGRESS_REDIS_ENDPOINT,
+        port: process.env.PROGRESS_REDIS_PORT
     }
 })
 

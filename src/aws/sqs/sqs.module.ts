@@ -5,5 +5,6 @@ import { SQSService } from "./sqs.service";
 import { SheetModule } from "src/sheet/sheet.module";
 @Module({
     providers: [...SQSProvider, SQSService],
+    exports: [...SQSProvider, SQSService]
 })
 export class SQSModule {}

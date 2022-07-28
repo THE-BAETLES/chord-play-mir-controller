@@ -1,12 +1,9 @@
 import { Injectable } from "@nestjs/common";
 import axios, { Axios } from "axios";
 import { AxiosResponse } from "axios";
-import * as qs from 'qs'
-
 @Injectable()
 export class AxiosService {
     private readonly axiosInstance;
-
     constructor() {
         this.axiosInstance = axios.create()
     }
