@@ -1,4 +1,4 @@
 export type Chord = {
-    csvPath: string;
-    midiPath: string;
-}
+  csvPath: string;
+  midiPath: string;
+};

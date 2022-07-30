@@ -1,6 +1,6 @@
-import { Sheet } from "src/entities/sheet.entities";
+import { Sheet } from 'src/entities/sheet.entities';
 
 export interface PostSheetResponseDto {
-    success: boolean;
-    payload: Sheet;
+  success: boolean;
+  payload: Sheet;
 }

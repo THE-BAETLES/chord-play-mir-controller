@@ -3,11 +3,12 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { SheetModule } from './sheet/sheet.module';
 import configuration from './configs/configuration';
 @Module({
-  imports: [  
+  imports: [
     ConfigModule.forRoot({
-    isGlobal: true,
-    load: [configuration]
-  }), SheetModule]
+      isGlobal: true,
+      load: [configuration],
+    }),
+    SheetModule,
+  ],
 })
-
 export class AppModule {}

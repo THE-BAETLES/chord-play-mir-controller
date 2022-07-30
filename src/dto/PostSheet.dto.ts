@@ -1,9 +1,8 @@
-
 export type PostSheetDto = {
-    videoId: string;
-}
+  videoId: string;
+};
 
 export type SQSSheetCreateDto = {
-    videoId: string;
-    sheetId: string;
-}
+  videoId: string;
+  sheetId: string;
+};

@@ -10,11 +10,9 @@ import { sheetDataProvider } from './sheetdata.providers';
 import { SheetDataRepository } from 'src/repositories/sheetdata.repository';
 import { SheetRepository } from 'src/repositories/sheet.repository';
 @Module({
-    imports: [
-        SQSModule, RedisModule, MongoModule
-    ],
-    controllers: [SheetController],
-    providers: [SheetService, SheetDataRepository, AxiosService, RedisService, ...sheetDataProvider, SheetRepository],
-    exports: [SheetService, SheetDataRepository, AxiosService, RedisService, ...sheetDataProvider, SheetRepository]
+  imports: [SQSModule, RedisModule, MongoModule],
+  controllers: [SheetController],
+  providers: [SheetService, SheetDataRepository, AxiosService, RedisService, ...sheetDataProvider, SheetRepository],
+  exports: [SheetService, SheetDataRepository, AxiosService, RedisService, ...sheetDataProvider, SheetRepository],
 })
 export class SheetModule {}

@@ -5,7 +5,7 @@ import { sheetDataProvider } from 'src/sheet/sheetdata.providers';
 import { SheetDataRepository } from 'src/repositories/sheetdata.repository';
 
 @Module({
-    providers: [...MongoDBProvider, MongoService],
-    exports: [...MongoDBProvider, MongoService]
-}) 
+  providers: [...MongoDBProvider, MongoService],
+  exports: [...MongoDBProvider, MongoService],
+})
 export class MongoModule {}

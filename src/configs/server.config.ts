@@ -1,6 +1,5 @@
 export interface ServerConfigType {
-    separateEndpoint: string;
-    retrievalEndPoint: string;
-    sheetEndpoint: string
+  separateEndpoint: string;
+  retrievalEndPoint: string;
+  sheetEndpoint: string;
 }
-
