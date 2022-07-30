@@ -57,6 +57,16 @@ export class SheetService implements ISheetService {
     return response;
   }
 
+  private async createSheetData(videoId, sheetData: Sheet) {
+    const sheetId: string = await (await this.sheetRepository.findSheetIdByVideoId(videoId))._id;
+
+    await this.sheetDataRepository.create({
+      _id: sheetId,
+      bpm: sheetData.bpm,
+      chord_info: sheetData.info,
+    });
+  }
+
   private async getSheet(videoId, chordInfo: Chord, progressDoneHandler: StageDoneHandlerType): Promise<Sheet> {
     Logger.log('Get Sheet Start!!');
     const response = await (
@@ -66,13 +76,7 @@ export class SheetService implements ISheetService {
       })
     ).data;
 
-    const sheetId: string = await (await this.sheetRepository.findSheetIdByVideoId(videoId))._id;
-
-    await this.sheetDataRepository.create({
-      _id: sheetId,
-      bpm: response.bpm,
-      chord_info: response.info,
-    });
+    await this.createSheetData(videoId, response);
 
     await progressDoneHandler({
       status: 3,
@@ -107,14 +111,17 @@ export class SheetService implements ISheetService {
 
   async startServer() {
     while (true) {
+      // Long polling
       const sqsMessage = await this.sqsService.receiveMessage();
-      const videoId = sqsMessage.Messages[0].Body;
+      const message = sqsMessage.Messages[0];
+
+      const videoId = message.Body;
+      const receiptHandle = message.ReceiptHandle;
+      // CreateSheet Start
       await this.createSheet({
         videoId: videoId,
       });
-      // for(let message of sqsMessage.Messages){
-
-      // }
+      const deleteResponse = await this.sqsService.deleteMessage(receiptHandle);
     }
   }
 }

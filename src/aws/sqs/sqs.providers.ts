@@ -2,8 +2,6 @@ import * as AWS from 'aws-sdk';
 import { AwsConfigType } from 'src/configs/aws.config';
 import { ConfigService } from '@nestjs/config';
 import { SQSClient } from '@aws-sdk/client-sqs';
-import { SQSClientConfig } from '@aws-sdk/client-sqs';
-import { createSecretKey } from 'crypto';
 
 export const SQS_CLIENT = 'SQS_CLIENT';
 
