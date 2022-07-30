@@ -113,15 +113,14 @@ export class SheetService implements ISheetService {
     while (true) {
       // Long polling
       const sqsMessage = await this.sqsService.receiveMessage();
-      const message = sqsMessage.Messages[0];
+      if (sqsMessage.Messages === undefined) continue;
 
+      const message = sqsMessage.Messages[0];
       const videoId = message.Body;
       const receiptHandle = message.ReceiptHandle;
-      // CreateSheet Start
-      await this.createSheet({
-        videoId: videoId,
-      });
-      const deleteResponse = await this.sqsService.deleteMessage(receiptHandle);
+      // // CreateSheet Start
+      await this.createSheet({ videoId: videoId });
+      await this.sqsService.deleteMessage(receiptHandle);
     }
   }
 }

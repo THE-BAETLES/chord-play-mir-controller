@@ -1,5 +1,5 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
-import { DeleteMessageCommand, DeleteMessageCommandInput, ReceiveMessageCommandOutput, SQSClient } from '@aws-sdk/client-sqs';
+import { DeleteMessageCommand, ReceiveMessageCommandOutput, SQSClient } from '@aws-sdk/client-sqs';
 import { SQS_CLIENT } from './sqs.providers';
 import { ReceiveMessageCommand } from '@aws-sdk/client-sqs';
 import { DeleteMessageCommandOutput } from '@aws-sdk/client-sqs';

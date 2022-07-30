@@ -9,6 +9,9 @@ export const MongoDBProvider = [
     useFactory: (configuration: ConfigService): Promise<typeof mongoose> => {
       Logger.log('Mongo connection start');
       const { user, password, endpoint } = configuration.get<MongoConfigType>('mongo');
+      console.log('Hello');
+
+      Logger.log(user, password, endpoint);
       return mongoose.connect(`mongodb://${user}:${password}@${endpoint}`, {
         dbName: 'chordplay',
       });
