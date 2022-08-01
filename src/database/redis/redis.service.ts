@@ -25,8 +25,19 @@ export class RedisService {
     await this.setConnection.set(channel, message.status.toString());
   }
 
+  private async checkAndSetProgressStatus(message: CreateAISheetMessage, channel: string) {
+    // make it atomic prevent race condition
+    await this.setConnection.watch(channel);
+    const multi = this.setConnection.multi();
+    const status: number = Number(await this.setConnection.get(channel));
+    if (status >= message.status) {
+      return;
+    }
+    await multi.set(channel, message.status.toString()).exec();
+  }
+
   async renderUserProgressBar(message: CreateAISheetMessage, channel: string) {
-    await this.setProgressStatus(message, channel);
+    await this.checkAndSetProgressStatus(message, channel);
     await this.publishMessage(message, channel);
   }
 }

@@ -49,17 +49,17 @@ export class SheetService implements ISheetService {
     return response.data;
   }
 
-  private async getChord(wavPath: string, progressDoneHandler: StageDoneHandlerType): Promise<Chord> {
+  private async getChord(wavPath: string, stageDoneHandler: StageDoneHandlerType): Promise<Chord> {
     Logger.log('Get Chord Start!!');
     const retrievalURL = this.configService.get<string>('inference.retrievalURL');
     const response: Chord = (await this.axiosService.getRequest<string, Chord>(`http://${retrievalURL}/chord`, { wavPath: wavPath })).data;
-    progressDoneHandler({
+    stageDoneHandler({
       status: 2,
     });
     return response;
   }
 
-  private async getSheet(videoId, chordInfo: Chord, progressDoneHandler: StageDoneHandlerType): Promise<Sheet> {
+  private async getSheet(videoId, chordInfo: Chord, stageDoneHandler: StageDoneHandlerType): Promise<Sheet> {
     Logger.log('Get Sheet Start!!');
     const sheetURL = this.configService.get<string>('inference.sheetURL');
 
@@ -71,7 +71,7 @@ export class SheetService implements ISheetService {
     ).data;
 
     await this.createSheetData(videoId, response);
-    await progressDoneHandler({
+    await stageDoneHandler({
       status: 3,
     });
     return response;
@@ -90,16 +90,16 @@ export class SheetService implements ISheetService {
 
   async createSheet(sheetDto: PostSheetDto): Promise<PostSheetResponseDto> {
     //  Use Redis publish for progress
-    const progressDoneHandler = async (message: CreateAISheetMessage) => await this.redisService.renderUserProgressBar(message, sheetDto.videoId);
-    const { videoId, accompanimentPath }: Separate = await this.getWav(sheetDto.videoId, progressDoneHandler);
-    const chord: Chord = await this.getChord(convertPath(accompanimentPath), progressDoneHandler);
+    const stageDoneHandler = async (message: CreateAISheetMessage) => await this.redisService.renderUserProgressBar(message, sheetDto.videoId);
+    const { videoId, accompanimentPath }: Separate = await this.getWav(sheetDto.videoId, stageDoneHandler);
+    const chord: Chord = await this.getChord(convertPath(accompanimentPath), stageDoneHandler);
     const sheet: Sheet = await this.getSheet(
       videoId,
       {
         csvPath: convertPath(chord.csvPath),
         midiPath: convertPath(chord.midiPath),
       },
-      progressDoneHandler,
+      stageDoneHandler,
     );
 
     const response: PostSheetResponseDto = {
