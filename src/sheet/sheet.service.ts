@@ -14,6 +14,7 @@ import { CreateAISheetMessage } from 'src/messages/createAiSheet.message';
 import { SheetRepository } from 'src/repositories/sheet.repository';
 import { SheetDataRepository } from 'src/repositories/sheetdata.repository';
 import { SQSService } from 'src/aws/sqs/sqs.service';
+import { ListBucketIntelligentTieringConfigurationsRequest } from '@aws-sdk/client-s3';
 export type GenerateMode = 'AUTO' | 'USER';
 
 export type GenerateSheetDto = {
@@ -80,15 +81,15 @@ export class SheetService implements ISheetService {
   private async createSheetData(videoId, sheetData: Sheet) {
     Logger.log('Create Sheet Start!!');
     const sheetId: string = await (await this.sheetRepository.findSheetIdByVideoId(videoId))._id;
-
     await this.sheetDataRepository.create({
       _id: sheetId,
       bpm: sheetData.bpm,
-      chord_info: sheetData.info,
+      chord_infos: sheetData.info,
     });
   }
 
   async createSheet(sheetDto: PostSheetDto): Promise<PostSheetResponseDto> {
+    Logger.log('Create Sheet Start!!');
     //  Use Redis publish for progress
     const stageDoneHandler = async (message: CreateAISheetMessage) => await this.redisService.renderUserProgressBar(message, sheetDto.videoId);
     const { videoId, accompanimentPath }: Separate = await this.getWav(sheetDto.videoId, stageDoneHandler);
@@ -120,6 +121,7 @@ export class SheetService implements ISheetService {
       const receiptHandle = message.ReceiptHandle;
       // // CreateSheet Start
       await this.createSheet({ videoId: videoId });
+      // Todo: handle receipt expire error
       await this.sqsService.deleteMessage(receiptHandle);
     }
   }

@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, Logger } from '@nestjs/common';
 import { RedisClientType } from '@redis/client';
 import { CreateAISheetMessage } from 'src/messages/createAiSheet.message';
 import { SET_PROGRESS_CONNECTION, PUBLISH_PROGRESS_CONNECTION } from './redis.provider';
@@ -26,6 +26,7 @@ export class RedisService {
   }
 
   private async checkAndSetProgressStatus(message: CreateAISheetMessage, channel: string) {
+    Logger.log('Check and set progress status: ', message.status);
     // make it atomic prevent race condition
     await this.setConnection.watch(channel);
     const multi = this.setConnection.multi();

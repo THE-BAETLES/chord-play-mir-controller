@@ -19,7 +19,7 @@ export class SQSService {
       QueueUrl: this.queueUrl,
       MaxNumberOfMessages: 1,
       WaitTimeSeconds: 5,
-      VisibilityTimeout: 50,
+      VisibilityTimeout: 120,
     });
 
     const response: ReceiveMessageCommandOutput = await this.client.send(command);
