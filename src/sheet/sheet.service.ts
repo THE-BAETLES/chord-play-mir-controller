@@ -41,7 +41,8 @@ export class SheetService implements ISheetService {
 
   private async getWav(videoId: string, stageDoneHandler: StageDoneHandlerType): Promise<Separate> {
     Logger.log('Get Wav Start!!');
-    const response: AxiosResponse<Separate> = await this.axiosService.getRequest<string, Separate>('http://separate:3000/separate', { videoId: videoId });
+    const separateURL = this.configService.get<string>('inference.separateURL');
+    const response: AxiosResponse<Separate> = await this.axiosService.getRequest<string, Separate>(`http://${separateURL}/separate`, { videoId: videoId });
     stageDoneHandler({
       status: 1,
     });
@@ -50,14 +51,34 @@ export class SheetService implements ISheetService {
 
   private async getChord(wavPath: string, progressDoneHandler: StageDoneHandlerType): Promise<Chord> {
     Logger.log('Get Chord Start!!');
-    const response: Chord = (await this.axiosService.getRequest<string, Chord>('http://retrieval:3000/chord', { wavPath: wavPath })).data;
+    const retrievalURL = this.configService.get<string>('inference.retrievalURL');
+    const response: Chord = (await this.axiosService.getRequest<string, Chord>(`http://${retrievalURL}/chord`, { wavPath: wavPath })).data;
     progressDoneHandler({
       status: 2,
     });
     return response;
   }
 
+  private async getSheet(videoId, chordInfo: Chord, progressDoneHandler: StageDoneHandlerType): Promise<Sheet> {
+    Logger.log('Get Sheet Start!!');
+    const sheetURL = this.configService.get<string>('inference.sheetURL');
+
+    const response = await (
+      await this.axiosService.getRequest<Chord, Sheet>(`http://${sheetURL}/sheet`, {
+        csvPath: chordInfo.csvPath,
+        midiPath: chordInfo.midiPath,
+      })
+    ).data;
+
+    await this.createSheetData(videoId, response);
+    await progressDoneHandler({
+      status: 3,
+    });
+    return response;
+  }
+
   private async createSheetData(videoId, sheetData: Sheet) {
+    Logger.log('Create Sheet Start!!');
     const sheetId: string = await (await this.sheetRepository.findSheetIdByVideoId(videoId))._id;
 
     await this.sheetDataRepository.create({
@@ -65,24 +86,6 @@ export class SheetService implements ISheetService {
       bpm: sheetData.bpm,
       chord_info: sheetData.info,
     });
-  }
-
-  private async getSheet(videoId, chordInfo: Chord, progressDoneHandler: StageDoneHandlerType): Promise<Sheet> {
-    Logger.log('Get Sheet Start!!');
-    const response = await (
-      await this.axiosService.getRequest<Chord, Sheet>('http://sheet:3000/sheet', {
-        csvPath: chordInfo.csvPath,
-        midiPath: chordInfo.midiPath,
-      })
-    ).data;
-
-    await this.createSheetData(videoId, response);
-
-    await progressDoneHandler({
-      status: 3,
-    });
-
-    return response;
   }
 
   async createSheet(sheetDto: PostSheetDto): Promise<PostSheetResponseDto> {
