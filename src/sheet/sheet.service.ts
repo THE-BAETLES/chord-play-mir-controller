@@ -50,7 +50,7 @@ export class SheetService implements ISheetService {
 
   private async getChord(wavPath: string, progressDoneHandler: StageDoneHandlerType): Promise<Chord> {
     Logger.log('Get Chord Start!!');
-    const response: Chord = (await this.axiosService.getRequest<string, Chord>('http://chord:3000/chord', { wavPath: wavPath })).data;
+    const response: Chord = (await this.axiosService.getRequest<string, Chord>('http://retrieval:3000/chord', { wavPath: wavPath })).data;
     progressDoneHandler({
       status: 2,
     });
@@ -87,11 +87,9 @@ export class SheetService implements ISheetService {
 
   async createSheet(sheetDto: PostSheetDto): Promise<PostSheetResponseDto> {
     //  Use Redis publish for progress
-    const progressDoneHandler = (message: CreateAISheetMessage) => this.redisService.renderUserProgressBar(message, videoId);
+    const progressDoneHandler = async (message: CreateAISheetMessage) => await this.redisService.renderUserProgressBar(message, sheetDto.videoId);
     const { videoId, accompanimentPath }: Separate = await this.getWav(sheetDto.videoId, progressDoneHandler);
-
     const chord: Chord = await this.getChord(convertPath(accompanimentPath), progressDoneHandler);
-
     const sheet: Sheet = await this.getSheet(
       videoId,
       {
@@ -114,7 +112,6 @@ export class SheetService implements ISheetService {
       // Long polling
       const sqsMessage = await this.sqsService.receiveMessage();
       if (sqsMessage.Messages === undefined) continue;
-
       const message = sqsMessage.Messages[0];
       const videoId = message.Body;
       const receiptHandle = message.ReceiptHandle;

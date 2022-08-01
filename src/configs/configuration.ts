@@ -5,6 +5,7 @@ import * as path from 'path';
 import { ServerConfigType } from './server.config';
 import { Logger } from '@nestjs/common';
 import { RedisConfigType } from './redis.config';
+import { InferenceServiceConfigType } from './inferenceService.config';
 
 if (process.env.NODE_ENV === 'development') {
   dotenv.config({ path: '.development.env' });
@@ -19,6 +20,7 @@ export interface ConfigType {
   mongo: MongoConfigType;
   server: ServerConfigType;
   redis: RedisConfigType;
+  inference: InferenceServiceConfigType;
 }
 
 export default (): ConfigType => ({
@@ -49,5 +51,10 @@ export default (): ConfigType => ({
   redis: {
     endpoint: process.env.PROGRESS_REDIS_ENDPOINT,
     port: process.env.PROGRESS_REDIS_PORT,
+  },
+  inference: {
+    separateURL: process.env.SEPERATE_URL || 'separate:3000',
+    retrievalURL: process.env.RETRIEVAL_URL || 'retrieval:3000',
+    sheetURL: process.env.SHEET_URL || 'sheet:3000',
   },
 });

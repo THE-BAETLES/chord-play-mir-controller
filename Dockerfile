@@ -1,4 +1,4 @@
-FROM node:12
+FROM node:16
 LABEL maintainer "chobe1<chobe0719@gmail.com>"
 LABEL serverType="MIR Controller Service"
 
@@ -11,4 +11,7 @@ RUN npm i -g @nestjs/cli
 RUN npm install
 
 COPY . .
-CMD ["npm", "run", "start:prod"]
+
+RUN npm run build
+
+CMD ["npm", "run", "start:container:prod"]

@@ -1,0 +1,14 @@
+{
+  "name": "chord-play-mir-controller",
+  "script": "dist/src/main.js",
+  "instances": "1",
+  "exec_mode": "cluster",
+  "wait_ready": true,
+  "error_file": "./logs/pm2/error.log",
+  "env": {
+    "NODE_ENV": "development"
+  },
+  "env_production": {
+    "NODE_ENV": "production"
+  }
+}
