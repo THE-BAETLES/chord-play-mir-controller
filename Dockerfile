@@ -14,4 +14,4 @@ COPY . .
 
 RUN npm run build
 
-CMD ["npm", "run/home/parker/chord-play-server/dockerfile/compose/1.0", "start:container:prod"]
+CMD ["npm", "run", "start:container:prod"]

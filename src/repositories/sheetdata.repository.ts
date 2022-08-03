@@ -16,6 +16,11 @@ export class SheetDataRepository {
     return createdSheetInfo.save();
   }
 
+  async isExist(id: string): Promise<boolean> {
+    const sheetId = this.sheetInfoModel.find({ _id: id });
+    return (await sheetId).length !== 0;
+  }
+
   async findAll(): Promise<SheetDataDocument[]> {
     return this.sheetInfoModel.find().exec();
   }
