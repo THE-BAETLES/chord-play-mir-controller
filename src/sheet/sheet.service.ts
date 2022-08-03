@@ -88,10 +88,12 @@ export class SheetService implements ISheetService {
     });
   }
 
-  async createSheet(sheetDto: PostSheetDto): Promise<PostSheetResponseDto> {
+  async requestCreateSheet(sheetDto: PostSheetDto): Promise<PostSheetResponseDto> {
+    // 에러 핸들링
     Logger.log('Create Sheet Start!!');
     //  Use Redis publish for progress
     const stageDoneHandler = async (message: CreateAISheetMessage) => await this.redisService.renderUserProgressBar(message, sheetDto.videoId);
+
     const { videoId, accompanimentPath }: Separate = await this.getWav(sheetDto.videoId, stageDoneHandler);
     const chord: Chord = await this.getChord(convertPath(accompanimentPath), stageDoneHandler);
     const sheet: Sheet = await this.getSheet(
@@ -119,9 +121,21 @@ export class SheetService implements ISheetService {
       const message = sqsMessage.Messages[0];
       const videoId = message.Body;
       const receiptHandle = message.ReceiptHandle;
-      // // CreateSheet Start
-      await this.createSheet({ videoId: videoId });
-      // Todo: handle receipt expire error
+
+      // 수신 핸들이 만료되면 메시지가 대기열로 돌아갑니다
+      // 결국 가시성 시간 제한 기간 내에 메세지를 삭제해야 함
+
+      // 에러 핸들링 해야함
+      // 1. visibility time 지나서 처리되는 경우
+      // 2. 항상 잘못된 message -> 삭제 -> 오류 () 확률상 잘못된 message -> 다시 큐에 올림
+      // 3. 어떤 request 든 N 번이상 큐에 들어갈 수 없음 (message의 metadata를 사용해서 처리 할 수 있을까?)
+
+      // 피드백
+      // 프론트엔드 상관없이 벡엔드만 봤을 때 오류 없는 코드를 작성해야 함
+      // 최대한 예외 상황을 생각해보고 막아야 함
+      // input value validation check 를 해줘야 함 (nest pipe decorater사용)
+
+      await this.requestCreateSheet({ videoId: videoId });
       await this.sqsService.deleteMessage(receiptHandle);
     }
   }

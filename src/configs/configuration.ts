@@ -53,8 +53,8 @@ export default (): ConfigType => ({
     port: process.env.PROGRESS_REDIS_PORT,
   },
   inference: {
-    separateURL: process.env.SEPARATE_URL || 'separate:3000',
-    retrievalURL: process.env.RETRIEVAL_URL || 'retrieval:3000',
-    sheetURL: process.env.SHEET_URL || 'sheet:3000',
+    separateURL: process.env.SEPARATE_URL || 'separate:1201',
+    retrievalURL: process.env.RETRIEVAL_URL || 'retrieval:1202',
+    sheetURL: process.env.SHEET_URL || 'sheet:1203',
   },
 });

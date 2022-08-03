@@ -2,9 +2,6 @@ import { Inject, Injectable, Logger } from '@nestjs/common';
 import { RedisClientType } from '@redis/client';
 import { CreateAISheetMessage } from 'src/messages/createAiSheet.message';
 import { SET_PROGRESS_CONNECTION, PUBLISH_PROGRESS_CONNECTION } from './redis.provider';
-import { SheetRepository } from 'src/repositories/sheet.repository';
-import { SheetDataRepository } from 'src/repositories/sheetdata.repository';
-import EventEmitter from 'events';
 
 export interface ProgressInfo {
   videoId: string;
@@ -30,6 +27,7 @@ export class RedisService {
     // make it atomic prevent race condition
     await this.setConnection.watch(channel);
     const multi = this.setConnection.multi();
+
     const status: number = Number(await this.setConnection.get(channel));
     if (status >= message.status) {
       return;
