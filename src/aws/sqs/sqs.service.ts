@@ -14,7 +14,6 @@ export class SQSService {
   }
 
   async receiveMessage(): Promise<ReceiveMessageCommandOutput> {
-    Logger.log('Receive Message Start!!');
     const command = new ReceiveMessageCommand({
       QueueUrl: this.queueUrl,
       MaxNumberOfMessages: 1,
@@ -23,7 +22,6 @@ export class SQSService {
     });
 
     const response: ReceiveMessageCommandOutput = await this.client.send(command);
-    Logger.log('Receive Message End!!');
     return response;
   }
 

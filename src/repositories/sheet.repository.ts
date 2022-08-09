@@ -7,6 +7,6 @@ export class SheetRepository {
   constructor(@Inject(SHEET_MODEL) private sheetModel: Model<SheetDocument>) {}
 
   async findSheetIdByVideoId(videoId: string): Promise<SheetDocument> {
-    return this.sheetModel.findOne({ video_id: videoId }).exec();
+    return this.sheetModel.findOne({ 'video.$id': videoId }).exec();
   }
 }

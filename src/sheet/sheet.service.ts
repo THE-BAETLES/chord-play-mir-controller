@@ -79,9 +79,9 @@ export class SheetService implements ISheetService {
   }
 
   private async createSheetData(videoId, sheetData: Sheet) {
-    Logger.log('Create Sheet Start!!');
+    Logger.log('Create Sheet Start!!3');
     const sheetId: string = await (await this.sheetRepository.findSheetIdByVideoId(videoId))._id;
-    const sheetDataId = this.sheetDataRepository;
+    Logger.log(`videoId = ${videoId} sheetId = ${sheetId}`);
     await this.sheetDataRepository.create({
       _id: sheetId,
       bpm: sheetData.bpm,
@@ -91,7 +91,7 @@ export class SheetService implements ISheetService {
 
   async requestCreateSheet(sheetDto: PostSheetDto): Promise<PostSheetResponseDto> {
     // 에러 핸들링
-    Logger.log('Create Sheet Start!!');
+    Logger.log('Create Sheet Start!!2');
     //  Use Redis publish for progress
     const stageDoneHandler = async (message: CreateAISheetMessage) => await this.redisService.renderUserProgressBar(message, sheetDto.videoId);
     const { videoId, accompanimentPath }: Separate = await this.getWav(sheetDto.videoId, stageDoneHandler);
@@ -136,7 +136,7 @@ export class SheetService implements ISheetService {
       try {
         await this.requestCreateSheet({ videoId: videoId });
       } catch (e) {
-        Logger.log('Error occur');
+        Logger.log('Error occur', e);
       } finally {
         await this.sqsService.deleteMessage(receiptHandle);
       }

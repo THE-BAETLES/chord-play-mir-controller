@@ -1,12 +1,13 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { ObjectId } from 'mongoose';
 import { ChordInfo } from 'src/models/chordinfo.model';
 
 export type SheetDataDocument = SheetData & Document;
 
 @Schema()
 export class SheetData {
-  @Prop({ type: String, required: true })
-  _id: string;
+  @Prop({ type: 'ObjectId', required: true })
+  _id: ObjectId;
 
   @Prop({ type: Number })
   bpm: number;
