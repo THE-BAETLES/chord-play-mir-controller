@@ -114,6 +114,8 @@ export class SheetService implements ISheetService {
   }
 
   async startServer() {
+    const sheetURL = this.configService.get<string>('inference.sheetURL');
+    console.log('sheetURL = ', sheetURL);
     while (true) {
       // Long polling
       const sqsMessage = await this.sqsService.receiveMessage();

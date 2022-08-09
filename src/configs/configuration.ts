@@ -12,6 +12,7 @@ if (process.env.NODE_ENV === 'development') {
   Logger.log('.development.env');
 } else {
   dotenv.config({ path: '.production.env' });
+  Logger.log('.production.env');
 }
 
 export interface ConfigType {
