@@ -130,6 +130,11 @@ export class SheetService implements ISheetService {
       }
     }
   }
-
-  async startServer() {}
+  async databaseTest() {
+    const sheetId: ObjectId = await (await this.sheetRepository.findSheetIdByVideoId('4NCnhPZB9us'))._id;
+    console.log('Test sheetId = ', sheetId);
+  }
+  async startServer() {
+    // this.databaseTest();
+  }
 }
