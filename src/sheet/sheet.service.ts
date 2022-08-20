@@ -7,6 +7,7 @@ import { AxiosResponse } from 'axios';
 import { PostSheetDto } from 'src/dto/PostSheet.dto';
 import { PostSheetResponseDto } from 'src/dto/PostSheetResponse.dto';
 import { Sheet } from 'src/entities/sheet.entities';
+import { ObjectId } from 'mongoose';
 import { RedisService } from 'src/database/redis/redis.service';
 import { Chord } from 'src/entities/chord.entities';
 import { ISheetService } from 'src/sheet/sheet.service.interface';
@@ -14,7 +15,7 @@ import { CreateAISheetMessage } from 'src/messages/createAiSheet.message';
 import { SheetRepository } from 'src/repositories/sheet.repository';
 import { SheetDataRepository } from 'src/repositories/sheetdata.repository';
 import { SQSService } from 'src/aws/sqs/sqs.service';
-import { ListBucketIntelligentTieringConfigurationsRequest } from '@aws-sdk/client-s3';
+import { ListBucketIntelligentTieringConfigurationsRequest, ObjectIdentifier } from '@aws-sdk/client-s3';
 export type GenerateMode = 'AUTO' | 'USER';
 
 export type GenerateSheetDto = {
@@ -80,7 +81,7 @@ export class SheetService implements ISheetService {
 
   private async createSheetData(videoId, sheetData: Sheet) {
     Logger.log('Create Sheet Start!!3');
-    const sheetId: string = await (await this.sheetRepository.findSheetIdByVideoId(videoId))._id;
+    const sheetId: ObjectId = await (await this.sheetRepository.findSheetIdByVideoId(videoId))._id;
     Logger.log(`videoId = ${videoId} sheetId = ${sheetId}`);
     await this.sheetDataRepository.create({
       _id: sheetId,
@@ -89,7 +90,7 @@ export class SheetService implements ISheetService {
     });
   }
 
-  async requestCreateSheet(sheetDto: PostSheetDto): Promise<PostSheetResponseDto> {
+  async startCreateSheet(sheetDto: PostSheetDto): Promise<PostSheetResponseDto> {
     // 에러 핸들링
     Logger.log('Create Sheet Start!!2');
     //  Use Redis publish for progress
@@ -112,10 +113,7 @@ export class SheetService implements ISheetService {
 
     return response;
   }
-
-  async startServer() {
-    const sheetURL = this.configService.get<string>('inference.sheetURL');
-    console.log('sheetURL = ', sheetURL);
+  async startMessagePolling() {
     while (true) {
       // Long polling
       const sqsMessage = await this.sqsService.receiveMessage();
@@ -123,20 +121,8 @@ export class SheetService implements ISheetService {
       const message = sqsMessage.Messages[0];
       const videoId = message.Body;
       const receiptHandle = message.ReceiptHandle;
-      // 수신 핸들이 만료되면 메시지가 대기열로 돌아갑니다
-      // 결국 가시성 시간 제한 기간 내에 메세지를 삭제해야 함
-
-      // 에러 핸들링 해야함
-      // 1. visibility time 지나서 처리되는 경우
-      // 2. 항상 잘못된 message -> 삭제 -> 오류 () 확률상 잘못된 message -> 다시 큐에 올림
-      // 3. 어떤 request 든 N 번이상 큐에 들어갈 수 없음 (message의 metadata를 사용해서 처리 할 수 있을까?)
-
-      // 피드백
-      // 프론트엔드 상관없이 벡엔드만 봤을 때 오류 없는 코드를 작성해야 함
-      // 최대한 예외 상황을 생각해보고 막아야 함
-      // input value validation check 를 해줘야 함 (nest pipe decorater사용)
       try {
-        await this.requestCreateSheet({ videoId: videoId });
+        await this.startCreateSheet({ videoId: videoId });
       } catch (e) {
         Logger.log('Error occur', e);
       } finally {
@@ -144,4 +130,6 @@ export class SheetService implements ISheetService {
       }
     }
   }
+
+  async startServer() {}
 }

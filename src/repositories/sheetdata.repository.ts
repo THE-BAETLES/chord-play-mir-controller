@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { CreateSheetInfoDto } from 'src/dto/CreateSheetInfo.dto';
 import { Model } from 'mongoose';
-import { SheetDataDocument } from 'src/schemas/sheetData.schema';
+import { SheetData, SheetDataDocument } from 'src/schemas/sheetData.schema';
 import { SHEET_DATA_MODEL } from 'src/sheet/sheetdata.providers';
 @Injectable()
 export class SheetDataRepository {
@@ -10,7 +10,7 @@ export class SheetDataRepository {
     private sheetInfoModel: Model<SheetDataDocument>,
   ) {}
 
-  async create(createSheetInfoDto: CreateSheetInfoDto): Promise<SheetDataDocument> {
+  async create(createSheetInfoDto: SheetData): Promise<SheetDataDocument> {
     // TODO: Handle duplication id error
     const createdSheetInfo = new this.sheetInfoModel(createSheetInfoDto);
     return createdSheetInfo.save();
