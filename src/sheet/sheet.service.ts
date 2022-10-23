@@ -15,7 +15,7 @@ import { CreateAISheetMessage } from 'src/messages/createAiSheet.message';
 import { SheetRepository } from 'src/repositories/sheet.repository';
 import { SheetDataRepository } from 'src/repositories/sheetdata.repository';
 import { SQSService } from 'src/aws/sqs/sqs.service';
-import { ListBucketIntelligentTieringConfigurationsRequest, ObjectIdentifier } from '@aws-sdk/client-s3';
+import { BeatInfo } from 'src/entities/beatInfo.entities';
 export type GenerateMode = 'AUTO' | 'USER';
 
 export type GenerateSheetDto = {
@@ -44,6 +44,8 @@ export class SheetService implements ISheetService {
   private async getWav(videoId: string, stageDoneHandler: StageDoneHandlerType): Promise<Separate> {
     Logger.log('Get Wav Start!!');
     const separateURL = this.configService.get<string>('inference.separateURL');
+    console.log('SeparateURL = ', separateURL);
+
     const response: AxiosResponse<Separate> = await this.axiosService.getRequest<string, Separate>(`http://${separateURL}/separate`, { videoId: videoId });
     stageDoneHandler({
       status: 1,
@@ -61,14 +63,22 @@ export class SheetService implements ISheetService {
     return response;
   }
 
-  private async getSheet(videoId, chordInfo: Chord, stageDoneHandler: StageDoneHandlerType): Promise<Sheet> {
+  private async getBeatInfo(wavPath: string): Promise<BeatInfo> {
+    Logger.log('Get BeatInfo Start!!');
+    const beatURL = this.configService.get<string>('inference.beatURL');
+    const response = await (await await this.axiosService.getRequest<string, BeatInfo>(`http://${beatURL}/beat`, { wavPath: wavPath })).data;
+    return response;
+  }
+
+  private async getSheet(videoId, chordInfo: Chord, beatInfo: BeatInfo, stageDoneHandler: StageDoneHandlerType): Promise<Sheet> {
     Logger.log('Get Sheet Start!!');
     const sheetURL = this.configService.get<string>('inference.sheetURL');
-
     const response = await (
       await this.axiosService.getRequest<Chord, Sheet>(`http://${sheetURL}/sheet`, {
         csvPath: chordInfo.csvPath,
         midiPath: chordInfo.midiPath,
+        bpm: beatInfo.bpm,
+        beats: beatInfo.beats,
       })
     ).data;
 
@@ -82,27 +92,34 @@ export class SheetService implements ISheetService {
   private async createSheetData(videoId, sheetData: Sheet) {
     Logger.log('Create Sheet Start!!3');
     const sheetId: ObjectId = await (await this.sheetRepository.findSheetIdByVideoId(videoId))._id;
+
     Logger.log(`videoId = ${videoId} sheetId = ${sheetId}`);
     await this.sheetDataRepository.create({
       _id: sheetId,
       bpm: sheetData.bpm,
-      chord_infos: sheetData.info,
+      beat_infos: sheetData.beatInfos,
+      chord_infos: sheetData.chordInfos,
     });
   }
 
   async startCreateSheet(sheetDto: PostSheetDto): Promise<PostSheetResponseDto> {
     // 에러 핸들링
-    Logger.log('Create Sheet Start!!2');
     //  Use Redis publish for progress
     const stageDoneHandler = async (message: CreateAISheetMessage) => await this.redisService.renderUserProgressBar(message, sheetDto.videoId);
+
     const { videoId, accompanimentPath }: Separate = await this.getWav(sheetDto.videoId, stageDoneHandler);
-    const chord: Chord = await this.getChord(convertPath(accompanimentPath), stageDoneHandler);
+
+    const wavPath = convertPath(accompanimentPath);
+    const chord: Chord = await this.getChord(wavPath, stageDoneHandler);
+    const beatInfo: BeatInfo = await this.getBeatInfo(wavPath);
+
     const sheet: Sheet = await this.getSheet(
       videoId,
       {
         csvPath: convertPath(chord.csvPath),
         midiPath: convertPath(chord.midiPath),
       },
+      beatInfo,
       stageDoneHandler,
     );
 
@@ -121,6 +138,8 @@ export class SheetService implements ISheetService {
       const message = sqsMessage.Messages[0];
       const videoId = message.Body;
       const receiptHandle = message.ReceiptHandle;
+
+      console.log('Start Polling', message, videoId, receiptHandle);
       try {
         await this.startCreateSheet({ videoId: videoId });
       } catch (e) {
@@ -130,12 +149,13 @@ export class SheetService implements ISheetService {
       }
     }
   }
+
   async databaseTest() {
-    const sheetId: ObjectId = await (await this.sheetRepository.findSheetIdByVideoId('4NCnhPZB9us'))._id;
+    const sheetId: ObjectId = await (await this.sheetRepository.findSheetIdByVideoId('KZH-MpiwmaU'))._id;
     console.log('Test sheetId = ', sheetId);
   }
 
   async startServer() {
-    // this.databaseTest();
+    this.startMessagePolling();
   }
 }

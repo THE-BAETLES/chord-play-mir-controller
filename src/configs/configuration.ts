@@ -1,11 +1,12 @@
 import { AwsConfigType } from './aws.config';
 import { MongoConfigType } from './mongo.config';
 import * as dotenv from 'dotenv';
-import * as path from 'path';
 import { ServerConfigType } from './server.config';
 import { Logger } from '@nestjs/common';
 import { RedisConfigType } from './redis.config';
 import { InferenceServiceConfigType } from './inferenceService.config';
+
+Logger.log(process.env.NODE_ENV);
 
 if (process.env.NODE_ENV === 'development') {
   dotenv.config({ path: '.development.env' });
@@ -48,6 +49,7 @@ export default (): ConfigType => ({
     separateEndpoint: process.env.SEPARATE_ENDPOINT,
     retrievalEndPoint: process.env.RETRIEVAL_ENDPOINT,
     sheetEndpoint: process.env.SHEET_ENDPOINT,
+    beatEndpoint: process.env.BEAT_ENDPOINT,
   },
   redis: {
     endpoint: process.env.PROGRESS_REDIS_ENDPOINT,
@@ -56,6 +58,7 @@ export default (): ConfigType => ({
   inference: {
     separateURL: process.env.SEPARATE_URL || 'localhost:1201',
     retrievalURL: process.env.RETRIEVAL_URL || 'localhost:1202',
-    sheetURL: process.env.SHEET_URL || 'localhost:1203',
+    beatURL: process.env.BEAT_URL || 'localhost:1203',
+    sheetURL: process.env.SHEET_URL || 'localhost:1204',
   },
 });

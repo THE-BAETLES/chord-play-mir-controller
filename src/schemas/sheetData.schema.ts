@@ -11,6 +11,9 @@ export class SheetData {
   @Prop({ type: Number })
   bpm: number;
 
+  @Prop({ type: [Number] })
+  beat_infos: number[];
+
   @Prop()
   chord_infos: ChordInfo[];
 }
