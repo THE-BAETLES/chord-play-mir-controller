@@ -11,11 +11,8 @@ export class SheetData {
   @Prop({ type: Number })
   bpm: number;
 
-  @Prop({ type: [Number] })
-  beat_infos: number[];
-
   @Prop()
-  chord_infos: ChordInfo[];
+  infos: ChordInfo[];
 }
 
 export const SheetDataSchema = SchemaFactory.createForClass(SheetData);

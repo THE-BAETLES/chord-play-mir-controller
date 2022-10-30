@@ -8,7 +8,8 @@ const port = process.env.SERVER_PORT;
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   const sheetService = app.select(SheetModule).get(SheetService);
-  sheetService.startServer();
+  // sheetService.startServer();
+  sheetService.createSheetTest();
 }
 
 bootstrap();

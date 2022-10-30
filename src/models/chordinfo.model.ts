@@ -1,8 +1,6 @@
 export interface ChordInfo {
-  start: number;
-  end: number;
-  root: string;
-  triad: string;
+  root: string | 'none';
+  triad: string | 'none';
   bass: string | 'none';
-  position: number;
+  beat_time: number;
 }

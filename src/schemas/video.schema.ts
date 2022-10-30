@@ -9,27 +9,27 @@ export class Video {
   @Prop({ type: String, required: true })
   _id: string;
 
-  thumbnail_path: string;
+  thumbnail_path?: string;
 
-  title: string;
-
-  @Prop()
-  genre: string;
+  title?: string;
 
   @Prop()
-  singer: string;
+  genre?: string;
 
   @Prop()
-  tags: string[];
+  singer?: string;
 
   @Prop()
-  length: number;
+  tags?: string[];
 
   @Prop()
-  difficulty_avg: number;
+  length?: number;
 
   @Prop()
-  play_count: number;
+  difficulty_avg?: number;
+
+  @Prop()
+  play_count?: number;
 }
 
 export const VideoSchema = SchemaFactory.createForClass(Video);

@@ -5,25 +5,25 @@ export type SheetDocument = Sheet & Document;
 
 @Schema()
 export class Sheet {
-  _id: ObjectId;
+  _id?: ObjectId;
 
   @Prop({ type: String, ref: 'VIDEO' })
   video: Video;
 
   @Prop()
-  user_id: string;
+  user_id?: string;
 
   @Prop()
-  title: string;
+  title?: string;
 
   @Prop()
-  created_at: Date;
+  created_at?: Date;
 
   @Prop()
-  updated_at: Date;
+  updated_at?: Date;
 
   @Prop()
-  like_count: number;
+  like_count?: number;
 }
 
 export const SheetSchema = SchemaFactory.createForClass(Sheet);
